@@ -9,12 +9,32 @@
   "author": "Paingha Joe Alagoa",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "chalk": "^2.4.2",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
     "ejs": "^2.6.1",
     "express": "^4.17.0",
+    "express-validation": "^1.0.2",
+    "express-winston": "^3.2.1",
+    "helmet": "^3.18.0",
+    "http-status": "^1.3.2",
     "isomorphic-unfetch": "^3.0.0",
-    "lodash": "^4.17.11"
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.11",
+    "method-override": "^3.0.0",
+    "module-alias": "^2.2.0",
+    "moment": "^2.24.0",
+    "morgan": "^1.9.1",
+    "nodemailer": "^6.2.1",
+    "nodemailer-sendgrid-transport": "^0.2.0",
+    "pg": "^7.11.0",
+    "pg-hstore": "^2.3.3",
+    "randomstring": "^1.1.5",
+    "sequelize": "^5.9.3",
+    "winston": "^3.2.1"
   }
 }

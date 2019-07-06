@@ -1,185 +1,142 @@
+const Alias = require('./alias');
+
+
+// connect to db
+const sequelize = require('@Sequelize');
+sequelize.init();
+const Sequelize = sequelize.get();
+
+const ModelAlias = require('./model-alias');
+
 const express = require('express');
-const chalk = require('chalk')
-const cors = require('cors');
-const path = require('path');
-const gradeNow = require('./index');
-const app = express();
-//instalize middleware here
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const compress = require('compression');
+const methodOverride = require('method-override');
+const cors = require('cors');
+const chalk = require('chalk');
+const helmet = require('helmet');
+const path = require('path');
+const expressWinston = require('express-winston');
+const expressValidation = require('express-validation');
+const HTTPStatus = require('http-status');
+
+const APIRoutes = require('@api');
+
+const APIError = require('@api-error');
+
+// config variabls
+const CONFIG = require('@CONFIG');
+
+//LIB
+const logger = require('@winston');
+
+//Express
+const app = express();
+
+//Morgan
+app.use(morgan('dev'));
+
+// Parse body params and attach them to req.body
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(cookieParser());
+app.use(compress());
+app.use(methodOverride());
+
+app.use(helmet());
+
 app.use(cors());
+
+// View Engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, '.', 'public')));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
+if (CONFIG.env === 'development') {
+  expressWinston.requestWhitelist.push('body');
+  expressWinston.responseWhitelist.push('body');
+  app.use(expressWinston.logger({
+    winstonInstance: logger,
+    meta: true,
+    msg: 'HTTP {{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms',
+    colorStatus: true
+  }));
+}
 
-app.get('/api', (req, res)=> {
-    res.send('Test Api')
-  })
-app.get('/api/questions', (req, res)=> {
-    var someDate = new Date();
-    var numberOfDaysToAdd = 2;
-    someDate.setDate(someDate.getDate() + numberOfDaysToAdd); 
-    const questionAndAnswers = {
-        "subject": "Chemistry",
-        "courseId": "7575145",
-        "taughtBy": "James Peters",
-        "timeLimit": "3600",
-        "quizQuestionNumber": 6,
-        "eachPointWorth": 5,
-        "totalPointsAttainable": 30,
-        "dueDate": someDate,
-        "questions": [
-        {
-          "questionNumber": 4,
-          "question": "Metals of the first transition series have special proper ties which are different from those of groups I and II elements because they have partially filled",
-          "answer": "C",
-          "options": [
-            {
-              "letterOption": "A",
-              "option": "s  orbitals",
-            },
-            {
-              "letterOption": "B",
-              "option": "p orbitals",
-            },
-            {
-              "letterOption": "C",
-              "option": "d orbitals",
-            },
-            {
-              "letterOption": "D",
-              "option": "f orbitals",
-            }
-          ]
-        },
-        {
-          "questionNumber": 9,
-          "question": "Milikan\u2019s contribution to the development of atomic theory is the determination of",
-          "answer": "C",
-          "options": [
-            {
-              "letterOption": "A",
-              "option": "Charge on electron",
-            },
-            {
-              "letterOption": "B",
-              "option": "Positive rays",
-            },
-            {
-              "letterOption": "C",
-              "option": "Charge to amss ratio",
-            },
-            {
-              "letterOption": "D",
-              "option": "Cathode rays",
-            }
-          ]
-        },
-        {
-          "questionNumber": 12,
-          "question": "Benzene reacts with hydrogen in the presence of nickel catalyst at 1800C to give",
-          "answer": "C",
-          "options": [
-            {
-              "letterOption": "A",
-              "option": "Toluene",
-            },
-            {
-              "letterOption": "B",
-              "option": "Cyclopentane",
-            },
-            {
-              "letterOption": "C",
-              "option": "Cyclohexane",
-            },
-            {
-              "letterOption": "D",
-              "option": "Xylene",
-            }
-          ]
-        },
-        {
-          "questionNumber": 78,
-          "question": "The pair of organic compounds that are isomers is",
-          "answer": "D",
-          "options": [
-            {
-              "letterOption": "A",
-              "option": "Benzene and methylbenzene",
-            },
-            {
-              "letterOption": "B",
-              "option": "Trichloromethane and Tetrachloromethane",
-            },
-            {
-              "letterOption": "C",
-              "option": "Ethanol and propanone",
-            },
-            {
-              "letterOption": "D",
-              "option": "But-1-ene and but-2-ene",
-            }
-          ]
-        },
-        {
-          "questionNumber": 41,
-          "question": "Natural water collected from rivers and ponds contains oxygen, carbon(IV) oxide and",
-          "answer": "C",
-          "options": [
-            {
-              "letterOption": "A",
-              "option": "Chlorine",
-            },
-            {
-              "letterOption": "B",
-              "option": "Hydrogen",
-            },
-            {
-              "letterOption": "C",
-              "option": "Sulphur(IV) oxide",
-            },
-            {
-              "letterOption": "D",
-              "option": "Nitrogen",
-            }
-          ]
-        },
-        {
-          "questionNumber": 33,
-          "question": "The mass of silver deposited when a current of 10A is passed through a solution of silver salt for 4830s is    [Ag = 108, F = 96500 Cmol-1]",
-          "answer": "B",
-          "options": [
-            {
-              "letterOption": "A",
-              "option": "108.0g",
-            },
-            {
-              "letterOption": "B",
-              "option": "54.0g",
-            },
-            {
-              "letterOption": "C",
-              "option": "27.0g",
-            },
-            {
-              "letterOption": "D",
-              "option": "13.5g",
-            }
-          ]
-        }
-      ]
-    };    
-    res.json(questionAndAnswers);
-  })
-app.post('/api/questions/answer', async(req, res)=> { 
-    let result = await gradeNow(req.body);
-    res.json(result);
-  })
+require('@boot')();
+app.use('/api', APIRoutes);
+
 app.get('/*', (req, res, next) => {
-    res.render('index');
-  });
-  app.listen(3500, ()=>{
-    console.log(chalk.green("App started..."))
+  res.render('index');
+});
+
+// if error is not an instanceOf APIError, convert it.
+app.use((err, req, res, next) => {
+  if (err instanceof expressValidation.ValidationError) {
+    // validation error contains errors which is an array of error each containing message[]
+    const unifiedErrorMessage = err.errors.map(error => error.messages.join('. ')).join(' and ');
+    return res.status(err.status).json({
+      error: {
+        message: unifiedErrorMessage,
+        status: err.status,
+        stack: CONFIG.env === 'development' ? err.stack : {}
+      }
+    });
+  } else if (!(err instanceof APIError)) {
+    return res.status(err.status || HTTPStatus.INTERNAL_SERVER_ERROR).json({
+      error: {
+        message: err.message,
+        status: err.status || 500,
+        stack: CONFIG.env === 'development' ? err.stack : {}
+      }
+    });
+  }
+  return next(err);
+});
+
+// catch 404 and forward to error handler
+app.use((req, res, next) => {
+  const err = new APIError('API not found', HTTPStatus.NOT_FOUND);
+  return next(err);
+});
+
+if (CONFIG.env !== 'test') {
+  app.use(expressWinston.errorLogger({
+    winstonInstance: logger
+  }));
+}
+
+app.use((err, req, res, next) =>
+  res.status(err.status).json({
+    error: {
+      message: err.message,
+      status: err.status,
+      stack: CONFIG.env === 'development' ? err.stack : {}
+    }
   })
+);
+const start = () => {
+  app.listen(CONFIG.port, (err) => {
+    if (err) {
+      logger.error(err);
+      throw err;
+    }
+    logger.info(`server started on port ${CONFIG.port} ${CONFIG.env}`);
+  });
+}
+
+
+Sequelize
+  .authenticate()
+  .then(() => {
+    logger.info('Connection has been established successfully...');
+    start();
+  })
+  .catch(err => {
+    logger.error('Unable to connect to the database:', err);
+  });
+
+module.exports = app;
