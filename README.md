@@ -9,8 +9,8 @@
 
 ### TODO:
 * ~~Add DB support.~~
-* Add user authentication.
-* Add support for more questions and subjects.
+* ~~Add user authentication.~~
+* ~~Add support for more questions~~ and subjects.
 * Add support to save grades.
 * Set React Router.
 * Setup Redux.
