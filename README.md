@@ -8,7 +8,7 @@
 3) Started at localhost:3500
 
 ### TODO:
-* ~~Add DB support.
+* ~~Add DB support.~~
 * Add user authentication.
 * Add support for more questions and subjects.
 * Add support to save grades.
